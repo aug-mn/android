@@ -40,7 +40,7 @@ Android security as it it won't let you directly replace an app that's been
 signed with a different key.  Manually uninstall GitHub from your device and
 you will then be able to install your own built version.
 
-See [here](https://github.com/github/android/wiki/Building-From-Eclipse) for
+See [here](https://github.com/aug-mn/android/wiki/Building-From-Eclipse) for
 instructions on building from [Eclipse](http://eclipse.org).
 
 ## Acknowledgements
