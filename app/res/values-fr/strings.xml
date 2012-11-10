@@ -39,6 +39,13 @@
     <string name="error_file_load">Erreur lors du chargement du fichier</string>
     <string name="error_code_load">Erreur lors du chargement du code</string>
     <string name="error_refs_load">Erreur lors du chargement des branches et tags</string>
+    <string name="error_following_person">Erreur lors de l\'abonnement</string>
+    <string name="error_unfollowing_person">Erreur lors du désabonnement</string>
+    <string name="error_checking_following_status">Erreur lors de la vérification d\'abonnement</string>
+    <string name="error_starring_repository">Erreur lors de l\'ajout aux favoris</string>
+    <string name="error_unstarring_repository">Erreur lors de la suppression des favoris</string>
+    <string name="error_checking_starring_status">Erreur lors de la vérification du favoris</string>
+    <string name="error_rendering_markdown">Erreur lors du rendu du markdown</string>
     <!--  -->
 
 
@@ -88,7 +95,6 @@
     <string name="issues">Tickets</string>
     <string name="gists">Gists</string>
     <string name="commits">Commits</string>
-    <string name="dashboard_issues">Aperçu des tickets</string>
     <string name="find_repositories">Trouver des dépôts</string>
     <string name="find_issues">Trouver des tickets</string>
     <string name="search_title">Chercher…</string>
@@ -114,10 +120,6 @@
     <string name="comment">Commenter</string>
     <string name="delete">Supprimer</string>
     <string name="refresh">Rafraîchir</string>
-    <string name="dashboard_watched">Suivis</string>
-    <string name="dashboard_assigned">Assignés</string>
-    <string name="dashboard_created">Créés</string>
-    <string name="dashboard_mentioned">Mentionnés</string>
     <string name="dashboard_issues_title">Aperçu des tickets</string>
     <string name="bookmarks">Favoris</string>
     <string name="gists_title">Gists</string>
@@ -134,16 +136,11 @@
     <string name="milestone_prefix">Jalon\u00a0:</string>
     <string name="edit_milestone">Modifier le jalon</string>
     <string name="edit_assignee">Modifier l\'assigné</string>
-    <string name="my_gists_tab">Les miens</string>
-    <string name="starred_gists_tab">Favoris</string>
-    <string name="all_gists_tab">Tous</string>
     <string name="description">Description</string>
     <string name="gist_description_hint">Gist créé sur Android</string>
     <string name="title">Titre</string>
     <string name="edit">Modifier</string>
-    <string name="star">Ajouter aux favoris</string>
     <string name="starring_gist">Ajout du Gist aux favoris…</string>
-    <string name="unstar">Supprimer des favoris</string>
     <string name="unstarring_gist">Suppression du Gist des favoris…</string>
     <string name="accounts_label">Comptes</string>
     <string name="select_assignee">Sélectionner l\'assigné</string>
@@ -183,6 +180,10 @@
     <string name="following">Abonnements</string>
     <string name="followers_self">Abonnés</string>
     <string name="following_self">Abonnements</string>
+    <string name="follow">S\'abonner</string>
+    <string name="unfollow">Se désabonner</string>
+    <string name="star">Ajouter aux favoris</string>
+    <string name="unstar">Supprimer des favoris</string>
     <string name="members">Membres</string>
     <string name="closing_issue">Fermeture du ticket…</string>
     <string name="reopening_issue">Réouverture du ticket…</string>
@@ -228,5 +229,32 @@
     <string name="enable_wrapping">Activer la coupure</string>
     <string name="disable_wrapping">Désactiver la coupure</string>
     <string name="code">Code</string>
+    <string name="following_user">Abonnement…</string>
+    <string name="unfollowing_user">Désabonnement…</string>
+    <string name="starring_repository">Ajout aux favrois…</string>
+    <string name="unstarring_repository">Supprimer des favoris…</string>
 
+    <!-- Tab titles, should be as short as possible -->
+    <string name="tab_repositories">repositories</string>
+    <string name="tab_news">nouvelles</string>
+    <string name="tab_following_self">abonnements</string>
+    <string name="tab_followers_self">abonnés</string>
+    <string name="tab_following">abonnements</string>
+    <string name="tab_followers">abonnés</string>
+    <string name="tab_members">membres</string>
+    <string name="tab_code">code</string>
+    <string name="tab_commits">commits</string>
+    <string name="tab_issues">tickets</string>
+    <string name="tab_watched">suivis</string>
+    <string name="tab_assigned">assignés</string>
+    <string name="tab_created">créés</string>
+    <string name="tab_mentioned">mentionnés</string>
+    <string name="tab_mine">miens</string>
+    <string name="tab_starred">favoris</string>
+    <string name="tab_all">tous</string>
+    <!--  -->
+    <string name="share">Partager</string>
+    <string name="show_password">Voir mot de passe</string>
+    <string name="write">Ecrire</string>
+    <string name="preview">Pré-visualiser</string>
 </resources>

@@ -15,8 +15,12 @@
  */
 package com.github.mobile.ui.repo;
 
+import static com.github.mobile.Intents.EXTRA_USER;
+import static com.github.mobile.RequestCodes.REPOSITORY_VIEW;
+import static com.github.mobile.ResultCodes.RESOURCE_CHANGED;
 import static java.util.Locale.US;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.view.View;
@@ -53,22 +57,20 @@ public class RepositoryListFragment extends ItemListFragment<Repository>
     private RecentRepositories recentRepos;
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        User org = this.org.get();
+        if (org != null)
+            outState.putSerializable(EXTRA_USER, org);
+    }
+
+    @Override
     protected void configureList(Activity activity, ListView listView) {
         super.configureList(activity, listView);
 
         listView.setDividerHeight(0);
         updateHeaders(items);
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        User currentOrg = ((OrganizationSelectionProvider) activity)
-                .addListener(this);
-        org.set(currentOrg);
-        if (currentOrg != null)
-            recentRepos = new RecentRepositories(activity, currentOrg);
     }
 
     @Override
@@ -89,20 +91,40 @@ public class RepositoryListFragment extends ItemListFragment<Repository>
         if (recentRepos != null)
             recentRepos.saveAsync();
 
-        Activity activity = getActivity();
-        if (activity != null && previousOrgId != organization.getId())
-            recentRepos = new RecentRepositories(activity, organization);
-
         // Only hard refresh if view already created and org is changing
-        if (previousOrgId != organization.getId())
+        if (previousOrgId != organization.getId()) {
+            Activity activity = getActivity();
+            if (activity != null)
+                recentRepos = new RecentRepositories(activity, organization);
+
             refreshWithProgress();
+        }
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+        Activity activity = getActivity();
+        User currentOrg = ((OrganizationSelectionProvider) activity)
+                .addListener(this);
+        if (currentOrg == null && savedInstanceState != null)
+            currentOrg = (User) savedInstanceState.getSerializable(EXTRA_USER);
+        org.set(currentOrg);
+        if (currentOrg != null)
+            recentRepos = new RecentRepositories(activity, currentOrg);
 
         setEmptyText(string.no_repositories);
+
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REPOSITORY_VIEW && resultCode == RESOURCE_CHANGED) {
+            forceRefresh();
+            return;
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -110,7 +132,8 @@ public class RepositoryListFragment extends ItemListFragment<Repository>
         Repository repo = (Repository) list.getItemAtPosition(position);
         if (recentRepos != null)
             recentRepos.add(repo);
-        startActivity(RepositoryViewActivity.createIntent(repo));
+        startActivityForResult(RepositoryViewActivity.createIntent(repo),
+                REPOSITORY_VIEW);
     }
 
     @Override

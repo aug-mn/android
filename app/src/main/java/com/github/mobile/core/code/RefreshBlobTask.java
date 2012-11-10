@@ -15,11 +15,8 @@
  */
 package com.github.mobile.core.code;
 
-import static org.eclipse.egit.github.core.Blob.ENCODING_BASE64;
-import static org.eclipse.egit.github.core.client.IGitHubConstants.CHARSET_UTF8;
 import android.accounts.Account;
 import android.content.Context;
-import android.text.TextUtils;
 
 import com.github.mobile.accounts.AuthenticatedUserTask;
 import com.google.inject.Inject;
@@ -27,12 +24,11 @@ import com.google.inject.Inject;
 import org.eclipse.egit.github.core.Blob;
 import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.service.DataService;
-import org.eclipse.egit.github.core.util.EncodingUtils;
 
 /**
  * Task to refresh a blob
  */
-public class RefreshBlobTask extends AuthenticatedUserTask<String> {
+public class RefreshBlobTask extends AuthenticatedUserTask<Blob> {
 
     private final Repository repository;
 
@@ -54,13 +50,8 @@ public class RefreshBlobTask extends AuthenticatedUserTask<String> {
         this.blobSha = blobSha;
     }
 
-    protected String run(Account account) throws Exception {
-        Blob blob = service.getBlob(repository, blobSha);
-        String content = blob.getContent();
-        if (!TextUtils.isEmpty(content)
-                && ENCODING_BASE64.equals(blob.getEncoding()))
-            content = new String(EncodingUtils.fromBase64(content),
-                    CHARSET_UTF8);
-        return content;
+    @Override
+    protected Blob run(Account account) throws Exception {
+        return service.getBlob(repository, blobSha);
     }
 }
