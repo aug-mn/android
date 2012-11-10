@@ -18,10 +18,10 @@ package com.github.mobile.ui.repo;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.github.mobile.R.string;
+import com.github.mobile.ui.FragmentPagerAdapter;
 import com.github.mobile.ui.code.RepositoryCodeFragment;
 import com.github.mobile.ui.commit.CommitListFragment;
 import com.github.mobile.ui.issue.IssuesFragment;
@@ -36,24 +36,30 @@ public class RepositoryPagerAdapter extends FragmentPagerAdapter {
      */
     public static final int ITEM_CODE = 1;
 
+    /**
+     * Index of commits page
+     */
+    public static final int ITEM_COMMITS = 2;
+
     private final Resources resources;
 
     private final boolean hasIssues;
 
     private RepositoryCodeFragment codeFragment;
 
+    private CommitListFragment commitsFragment;
+
     /**
      * Create repository pager adapter
      *
-     * @param fm
-     * @param resources
+     * @param activity
      * @param hasIssues
      */
-    public RepositoryPagerAdapter(FragmentManager fm, Resources resources,
+    public RepositoryPagerAdapter(SherlockFragmentActivity activity,
             boolean hasIssues) {
-        super(fm);
+        super(activity);
 
-        this.resources = resources;
+        resources = activity.getResources();
         this.hasIssues = hasIssues;
     }
 
@@ -61,13 +67,13 @@ public class RepositoryPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
         case 0:
-            return resources.getString(string.news);
+            return resources.getString(string.tab_news);
         case 1:
-            return resources.getString(string.code);
+            return resources.getString(string.tab_code);
         case 2:
-            return resources.getString(string.commits);
+            return resources.getString(string.tab_commits);
         case 3:
-            return resources.getString(string.issues);
+            return resources.getString(string.tab_issues);
         default:
             return null;
         }
@@ -82,7 +88,8 @@ public class RepositoryPagerAdapter extends FragmentPagerAdapter {
             codeFragment = new RepositoryCodeFragment();
             return codeFragment;
         case 2:
-            return new CommitListFragment();
+            commitsFragment = new CommitListFragment();
+            return commitsFragment;
         case 3:
             return new IssuesFragment();
         default:
@@ -117,6 +124,9 @@ public class RepositoryPagerAdapter extends FragmentPagerAdapter {
             int resultCode, Bundle arguments) {
         if (position == ITEM_CODE && codeFragment != null)
             codeFragment.onDialogResult(requestCode, resultCode, arguments);
+        else if (position == ITEM_COMMITS && commitsFragment != null)
+            commitsFragment.onDialogResult(requestCode, resultCode, arguments);
+
         return this;
     }
 }

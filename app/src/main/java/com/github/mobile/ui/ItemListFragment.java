@@ -152,13 +152,6 @@ public abstract class ItemListFragment<E> extends RoboSherlockFragment
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        setHasOptionsMenu(true);
-    }
-
-    @Override
     public void onCreateOptionsMenu(Menu optionsMenu, MenuInflater inflater) {
         inflater.inflate(menu.refresh, optionsMenu);
     }
@@ -167,6 +160,7 @@ public abstract class ItemListFragment<E> extends RoboSherlockFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         if (!isUsable())
             return false;
+
         switch (item.getItemId()) {
         case id.m_refresh:
             forceRefresh();
@@ -305,6 +299,21 @@ public abstract class ItemListFragment<E> extends RoboSherlockFragment
                     .getAdapter();
         else
             return null;
+    }
+
+    /**
+     * Notify the underlying adapter that the data set has changed
+     *
+     * @return this fragment
+     */
+    protected ItemListFragment<E> notifyDataSetChanged() {
+        HeaderFooterListAdapter<SingleTypeAdapter<E>> root = getListAdapter();
+        if (root != null) {
+            SingleTypeAdapter<E> typeAdapter = root.getWrappedAdapter();
+            if (typeAdapter != null)
+                typeAdapter.notifyDataSetChanged();
+        }
+        return this;
     }
 
     /**

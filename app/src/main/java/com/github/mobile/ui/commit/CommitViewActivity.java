@@ -22,8 +22,6 @@ import static com.github.mobile.Intents.EXTRA_POSITION;
 import static com.github.mobile.Intents.EXTRA_REPOSITORY;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.MenuItem;
@@ -32,7 +30,9 @@ import com.github.mobile.R.id;
 import com.github.mobile.R.layout;
 import com.github.mobile.R.string;
 import com.github.mobile.core.commit.CommitUtils;
-import com.github.mobile.ui.DialogFragmentActivity;
+import com.github.mobile.ui.FragmentProvider;
+import com.github.mobile.ui.PagerActivity;
+import com.github.mobile.ui.ViewPager;
 import com.github.mobile.ui.repo.RepositoryViewActivity;
 import com.github.mobile.util.AvatarLoader;
 import com.google.inject.Inject;
@@ -42,14 +42,10 @@ import java.util.Collection;
 import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.RepositoryCommit;
 
-import roboguice.inject.InjectExtra;
-import roboguice.inject.InjectView;
-
 /**
  * Activity to display a commit
  */
-public class CommitViewActivity extends DialogFragmentActivity implements
-        OnPageChangeListener {
+public class CommitViewActivity extends PagerActivity {
 
     /**
      * Create intent for this activity
@@ -97,20 +93,18 @@ public class CommitViewActivity extends DialogFragmentActivity implements
         return builder.toIntent();
     }
 
-    @InjectView(id.vp_pages)
     private ViewPager pager;
 
-    @InjectExtra(EXTRA_REPOSITORY)
     private Repository repository;
 
-    @InjectExtra(EXTRA_BASES)
     private CharSequence[] ids;
 
-    @InjectExtra(EXTRA_POSITION)
     private int initialPosition;
 
     @Inject
     private AvatarLoader avatars;
+
+    private CommitPagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,11 +112,16 @@ public class CommitViewActivity extends DialogFragmentActivity implements
 
         setContentView(layout.pager);
 
-        pager.setAdapter(new CommitPagerAdapter(getSupportFragmentManager(),
-                repository, ids));
+        pager = finder.find(id.vp_pages);
 
+        repository = getSerializableExtra(EXTRA_REPOSITORY);
+        ids = getCharSequenceArrayExtra(EXTRA_BASES);
+        initialPosition = getIntExtra(EXTRA_POSITION);
+
+        adapter = new CommitPagerAdapter(this, repository, ids);
+        pager.setAdapter(adapter);
         pager.setOnPageChangeListener(this);
-        pager.setCurrentItem(initialPosition);
+        pager.scheduleSetItem(initialPosition, this);
         onPageSelected(initialPosition);
 
         ActionBar actionBar = getSupportActionBar();
@@ -144,17 +143,16 @@ public class CommitViewActivity extends DialogFragmentActivity implements
         }
     }
 
-    public void onPageScrolled(int position, float positionOffset,
-            int positionOffsetPixels) {
-        // Intentionally left blank
-    }
-
+    @Override
     public void onPageSelected(int position) {
+        super.onPageSelected(position);
+
         final String id = CommitUtils.abbreviate(ids[position].toString());
         getSupportActionBar().setTitle(getString(string.commit_prefix) + id);
     }
 
-    public void onPageScrollStateChanged(int state) {
-        // Intentionally left blank
+    @Override
+    protected FragmentProvider getProvider() {
+        return adapter;
     }
 }

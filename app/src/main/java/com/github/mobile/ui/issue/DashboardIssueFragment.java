@@ -57,13 +57,6 @@ public class DashboardIssueFragment extends PagedItemFragment<RepositoryIssue> {
 
     private Map<String, String> filterData;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        setHasOptionsMenu(true);
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -76,7 +69,7 @@ public class DashboardIssueFragment extends PagedItemFragment<RepositoryIssue> {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == ISSUE_VIEW) {
-            getListAdapter().getWrappedAdapter().notifyDataSetChanged();
+            notifyDataSetChanged();
             forceRefresh();
             return;
         }

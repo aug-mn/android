@@ -46,22 +46,12 @@ public class UserListAdapter extends SingleTypeAdapter<User> {
         setItems(elements);
     }
 
-    /**
-     * Create user list adapter
-     *
-     * @param inflater
-     * @param avatars
-     */
-    public UserListAdapter(final LayoutInflater inflater,
-            final AvatarLoader avatars) {
-        this(inflater, null, avatars);
-    }
-
     @Override
     public long getItemId(final int position) {
         return getItem(position).getId();
     }
 
+    @Override
     protected int[] getChildViewIds() {
         return new int[] { id.iv_avatar, id.tv_login };
     }

@@ -21,6 +21,9 @@ import static android.accounts.AccountManager.KEY_AUTHTOKEN;
 import static android.accounts.AccountManager.KEY_BOOLEAN_RESULT;
 import static android.content.Intent.ACTION_VIEW;
 import static android.content.Intent.CATEGORY_BROWSABLE;
+import static android.text.InputType.TYPE_CLASS_TEXT;
+import static android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD;
+import static android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD;
 import static android.view.KeyEvent.ACTION_DOWN;
 import static android.view.KeyEvent.KEYCODE_ENTER;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
@@ -46,12 +49,16 @@ import android.view.View;
 import android.view.View.OnKeyListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.github.kevinsawicki.wishlist.ViewFinder;
 import com.github.mobile.DefaultClient;
 import com.github.mobile.R.id;
 import com.github.mobile.R.layout;
@@ -72,7 +79,6 @@ import org.eclipse.egit.github.core.User;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.UserService;
 
-import roboguice.inject.InjectView;
 import roboguice.util.RoboAsyncTask;
 
 /**
@@ -120,21 +126,17 @@ public class LoginActivity extends RoboSherlockAccountAuthenticatorActivity {
 
         @Override
         protected List<User> run(Account account) throws Exception {
-            return cache.getOrgs();
+            return cache.getOrgs(true);
         }
     }
 
     private AccountManager accountManager;
 
-    @InjectView(id.et_login)
     private AutoCompleteTextView loginText;
 
-    @InjectView(id.et_password)
     private EditText passwordText;
 
     private RoboAsyncTask<User> authenticationTask;
-
-    private String authToken;
 
     private String authTokenType;
 
@@ -163,6 +165,10 @@ public class LoginActivity extends RoboSherlockAccountAuthenticatorActivity {
 
         accountManager = AccountManager.get(this);
 
+        ViewFinder finder = new ViewFinder(this);
+        loginText = finder.find(id.et_login);
+        passwordText = finder.find(id.et_password);
+
         final Intent intent = getIntent();
         username = intent.getStringExtra(PARAM_USERNAME);
         authTokenType = intent.getStringExtra(PARAM_AUTHTOKEN_TYPE);
@@ -170,7 +176,7 @@ public class LoginActivity extends RoboSherlockAccountAuthenticatorActivity {
         confirmCredentials = intent.getBooleanExtra(PARAM_CONFIRMCREDENTIALS,
                 false);
 
-        TextView signupText = (TextView) findViewById(id.tv_signup);
+        TextView signupText = finder.find(id.tv_signup);
         signupText.setMovementMethod(LinkMovementMethod.getInstance());
         signupText.setText(Html.fromHtml(getString(string.signup_link)));
 
@@ -214,6 +220,21 @@ public class LoginActivity extends RoboSherlockAccountAuthenticatorActivity {
             }
         });
 
+        CheckBox showPassword = finder.find(id.cb_show_password);
+        showPassword.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,
+                    boolean isChecked) {
+                int type = TYPE_CLASS_TEXT;
+                if (isChecked)
+                    type |= TYPE_TEXT_VARIATION_VISIBLE_PASSWORD;
+                else
+                    type |= TYPE_TEXT_VARIATION_PASSWORD;
+                passwordText.setInputType(type);
+            }
+        });
+
         loginText.setAdapter(new ArrayAdapter<String>(this,
                 android.R.layout.simple_dropdown_item_1line,
                 getEmailAddresses()));
@@ -222,6 +243,18 @@ public class LoginActivity extends RoboSherlockAccountAuthenticatorActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        // Finish task if valid account exists
+        if (requestNewAccount) {
+            Account existing = AccountUtils.getPasswordAccessibleAccount(this);
+            if (existing != null && !TextUtils.isEmpty(existing.name)) {
+                String password = AccountManager.get(this)
+                        .getPassword(existing);
+                if (!TextUtils.isEmpty(password))
+                    finishLogin(existing.name, password);
+            }
+            return;
+        }
 
         updateEnablement();
     }
@@ -335,15 +368,17 @@ public class LoginActivity extends RoboSherlockAccountAuthenticatorActivity {
      * request. See onAuthenticationResult(). Sets the
      * AccountAuthenticatorResult which is sent back to the caller. Also sets
      * the authToken in AccountManager for this account.
+     *
+     * @param username
+     * @param password
      */
 
-    protected void finishLogin() {
+    protected void finishLogin(final String username, final String password) {
         final Intent intent = new Intent();
-        authToken = password;
         intent.putExtra(KEY_ACCOUNT_NAME, username);
         intent.putExtra(KEY_ACCOUNT_TYPE, ACCOUNT_TYPE);
         if (ACCOUNT_TYPE.equals(authTokenType))
-            intent.putExtra(KEY_AUTHTOKEN, authToken);
+            intent.putExtra(KEY_AUTHTOKEN, password);
         setAccountAuthenticatorResult(intent.getExtras());
         setResult(RESULT_OK, intent);
         finish();
@@ -357,7 +392,7 @@ public class LoginActivity extends RoboSherlockAccountAuthenticatorActivity {
     public void onAuthenticationResult(boolean result) {
         if (result) {
             if (!confirmCredentials)
-                finishLogin();
+                finishLogin(username, password);
             else
                 finishConfirmCredentials(true);
         } else {

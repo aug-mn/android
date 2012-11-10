@@ -89,7 +89,7 @@ public abstract class GistsFragment extends PagedItemFragment<Gist> {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == GIST_VIEW || requestCode == GIST_CREATE) {
-            getListAdapter().getWrappedAdapter().notifyDataSetChanged();
+            notifyDataSetChanged();
             forceRefresh();
             return;
         }
@@ -109,7 +109,6 @@ public abstract class GistsFragment extends PagedItemFragment<Gist> {
 
     @Override
     protected SingleTypeAdapter<Gist> createAdapter(List<Gist> items) {
-        return new GistListAdapter(avatars, getActivity().getLayoutInflater(),
-                items.toArray(new Gist[items.size()]));
+        return new GistListAdapter(avatars, getActivity(), items);
     }
 }
