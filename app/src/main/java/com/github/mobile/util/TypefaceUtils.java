@@ -145,7 +145,7 @@ public class TypefaceUtils {
     /**
      * Code icon
      */
-    public static final String ICON_CODE = "\uf011";
+    public static final String ICON_CODE = "\uf010";
 
     /**
      * Commit icon
@@ -166,6 +166,13 @@ public class TypefaceUtils {
      * Broadcast icon
      */
     public static final String ICON_BROADCAST = "\uf030";
+
+    /**
+     * Edit icon
+     */
+    public static final String ICON_EDIT = "\uf058";
+
+    private static Typeface OCTICONS;
 
     /**
      * Find the maximum number of digits in the given numbers
@@ -203,7 +210,9 @@ public class TypefaceUtils {
      * @return octicons typeface
      */
     public static Typeface getOcticons(final Context context) {
-        return getTypeface(context, "octicons-regular-webfont.ttf");
+        if (OCTICONS == null)
+            OCTICONS = getTypeface(context, "octicons-regular-webfont.ttf");
+        return OCTICONS;
     }
 
     /**

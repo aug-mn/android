@@ -105,8 +105,6 @@ public class IssuesFragment extends PagedItemFragment<Issue> {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setHasOptionsMenu(true);
-
         if (filter == null)
             filter = new IssueFilter(repository);
     }
@@ -132,7 +130,7 @@ public class IssuesFragment extends PagedItemFragment<Issue> {
     protected void configureList(Activity activity, ListView listView) {
         super.configureList(activity, listView);
 
-        getListAdapter().addHeader(filterHeader, null, false);
+        getListAdapter().addHeader(filterHeader, filter, true);
     }
 
     private void updateFilterSummary() {
@@ -173,9 +171,14 @@ public class IssuesFragment extends PagedItemFragment<Issue> {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        startActivityForResult(
-                IssuesViewActivity.createIntent(items, repository, position
-                        - getListAdapter().getHeadersCount()), ISSUE_VIEW);
+        if (position == 0)
+            startActivityForResult(
+                    EditIssuesFilterActivity.createIntent(filter),
+                    ISSUE_FILTER_EDIT);
+        else
+            startActivityForResult(
+                    IssuesViewActivity.createIntent(items, repository, position
+                            - getListAdapter().getHeadersCount()), ISSUE_VIEW);
     }
 
     @Override
@@ -231,7 +234,7 @@ public class IssuesFragment extends PagedItemFragment<Issue> {
         }
 
         if (requestCode == ISSUE_VIEW) {
-            getListAdapter().getWrappedAdapter().notifyDataSetChanged();
+            notifyDataSetChanged();
             forceRefresh();
             return;
         }

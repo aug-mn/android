@@ -17,11 +17,10 @@ package com.github.mobile.ui;
 
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabContentFactory;
@@ -29,6 +28,7 @@ import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
 import com.github.kevinsawicki.wishlist.ViewUtils;
+import com.github.mobile.R.drawable;
 import com.github.mobile.R.id;
 import com.github.mobile.util.TypefaceUtils;
 import com.viewpagerindicator.R.layout;
@@ -38,9 +38,8 @@ import com.viewpagerindicator.R.layout;
  *
  * @param <V>
  */
-public abstract class TabPagerActivity<V extends PagerAdapter> extends
-        DialogFragmentActivity implements OnPageChangeListener,
-        OnTabChangeListener, TabContentFactory {
+public abstract class TabPagerActivity<V extends PagerAdapter & FragmentProvider>
+        extends PagerActivity implements OnTabChangeListener, TabContentFactory {
 
     /**
      * View pager
@@ -58,19 +57,10 @@ public abstract class TabPagerActivity<V extends PagerAdapter> extends
     protected V adapter;
 
     @Override
-    public void onPageScrolled(int position, float positionOffset,
-            int positionOffsetPixels) {
-        // Intentionally left blank
-    }
-
-    @Override
     public void onPageSelected(final int position) {
-        host.setCurrentTab(position);
-    }
+        super.onPageSelected(position);
 
-    @Override
-    public void onPageScrollStateChanged(int state) {
-        // Intentionally left blank
+        host.setCurrentTab(position);
     }
 
     @Override
@@ -80,7 +70,7 @@ public abstract class TabPagerActivity<V extends PagerAdapter> extends
 
     @Override
     public View createTabContent(String tag) {
-        return ViewUtils.setGone(new View(this), true);
+        return ViewUtils.setGone(new View(getApplication()), true);
     }
 
     /**
@@ -146,16 +136,14 @@ public abstract class TabPagerActivity<V extends PagerAdapter> extends
     }
 
     private void updateCurrentItem(final int newPosition) {
-        int currentItem = pager.getCurrentItem();
         if (newPosition > -1 && newPosition < adapter.getCount()
-                && currentItem != newPosition) {
-            pager.setCurrentItem(newPosition);
+                && pager.setItem(newPosition))
             setCurrentItem(newPosition);
-        }
     }
 
     private void createPager() {
         adapter = createAdapter();
+        invalidateOptionsMenu();
         pager.setAdapter(adapter);
     }
 
@@ -166,6 +154,15 @@ public abstract class TabPagerActivity<V extends PagerAdapter> extends
      * initial call to {@link #configureTabPager()}
      */
     protected void createTabs() {
+        if (host.getTabWidget().getTabCount() > 0) {
+            // Crash on Gingerbread if tab isn't set to zero since adding a
+            // new tab removes selection state on the old tab which will be
+            // null unless the current tab index is the same as the first
+            // tab index being added
+            host.setCurrentTab(0);
+            host.clearAllTabs();
+        }
+
         LayoutInflater inflater = getLayoutInflater();
         int count = adapter.getCount();
         for (int i = 0; i < count; i++) {
@@ -183,6 +180,16 @@ public abstract class TabPagerActivity<V extends PagerAdapter> extends
 
             spec.setIndicator(view);
             host.addTab(spec);
+
+            int background;
+            if (i == 0)
+                background = drawable.tab_selector_right;
+            else if (i == count - 1)
+                background = drawable.tab_selector_left;
+            else
+                background = drawable.tab_selector_left_right;
+            ((ImageView) view.findViewById(id.iv_tab))
+                    .setImageResource(background);
         }
     }
 
@@ -206,5 +213,10 @@ public abstract class TabPagerActivity<V extends PagerAdapter> extends
         host = (TabHost) findViewById(id.th_tabs);
         host.setup();
         host.setOnTabChangedListener(this);
+    }
+
+    @Override
+    protected FragmentProvider getProvider() {
+        return adapter;
     }
 }

@@ -31,10 +31,14 @@
     <string name="error_issue_load">Issue 信息加载失败</string>
     <string name="error_collaborators_load">协作者加载失败</string>
     <string name="error_milestones_load">里程碑加载失败</string>
-    <string name="error_labels_load">标签加载失败</string>
+    <string name="error_labels_load">Issue 标签加载失败</string>
     <string name="error_bookmarks_load">书签加载失败</string>
     <string name="error_members_load">成员加载失败</string>
-    <string name="error_commits_load">提交加载失败</string>
+    <string name="error_commits_load">提交列表加载失败</string>
+    <string name="error_commit_load">提交加载失败</string>
+    <string name="error_file_load">文件加载失败</string>
+    <string name="error_code_load">代码加载失败</string>
+    <string name="error_refs_load">分支与标签加载失败</string>
     <!--  -->
 
 
@@ -52,8 +56,10 @@
     <string name="loading_gists">加载 Gist 列表…</string>
     <string name="loading_collaborators">加载协作者…</string>
     <string name="loading_milestones">加载里程碑…</string>
-    <string name="loading_labels">加载标签…</string>
+    <string name="loading_labels">加载 Issue 标签…</string>
     <string name="loading_commits">加载提交…</string>
+    <string name="loading_files_and_comments">加载文件与评论…</string>
+    <string name="loading_refs">加载分支与标签…</string>
     <!--  -->
 
 
@@ -73,7 +79,7 @@
     <!-- Updating messages -->
     <string name="updating_assignee">被指派人信息更新中…</string>
     <string name="updating_issue">Issue 更新中…</string>
-    <string name="updating_labels">标签信息更新中…</string>
+    <string name="updating_labels">Issue 标签信息更新中…</string>
     <string name="updating_milestone">里程碑信息更新中…</string>
     <!--  -->
 
@@ -82,7 +88,6 @@
     <string name="issues">Issues</string>
     <string name="gists">Gists</string>
     <string name="commits">提交</string>
-    <string name="dashboard_issues">Issue 面板</string>
     <string name="find_repositories">查询版本库</string>
     <string name="find_issues">查询 Issue </string>
     <string name="search_title">搜索…</string>
@@ -108,14 +113,11 @@
     <string name="comment">评论</string>
     <string name="delete">删除</string>
     <string name="refresh">刷新</string>
-    <string name="dashboard_watched">我关注的</string>
-    <string name="dashboard_assigned">指派给我的</string>
-    <string name="dashboard_created">我创建的</string>
-    <string name="dashboard_mentioned">提到我的</string>
     <string name="dashboard_issues_title">Issue 面板</string>
     <string name="bookmarks">书签</string>
     <string name="gists_title">Gist 列表</string>
     <string name="issue_title">Issue #</string>
+    <string name="pull_request_title">Pull Request #</string>
     <string name="gist_title">Gist\u0020</string>
     <string name="filter_issues_title">过滤 Issue</string>
     <string name="create_comment_title">发表评论</string>
@@ -123,13 +125,10 @@
     <string name="show_more">显示更多…</string>
     <string name="repositories">版本库</string>
     <string name="issues_title">Issue</string>
-    <string name="edit_labels">编辑标签</string>
+    <string name="edit_labels">编辑 Issue 标签</string>
     <string name="milestone_prefix">里程碑:</string>
     <string name="edit_milestone">编辑里程碑</string>
     <string name="edit_assignee">编辑被指派人</string>
-    <string name="my_gists_tab">我的</string>
-    <string name="starred_gists_tab">已加星标</string>
-    <string name="all_gists_tab">所有</string>
     <string name="description">描述</string>
     <string name="gist_description_hint">从 Android 创建的 Gist</string>
     <string name="title">标题</string>
@@ -141,7 +140,8 @@
     <string name="accounts_label">账户</string>
     <string name="select_assignee">选择被指派人</string>
     <string name="select_milestone">选择里程碑</string>
-    <string name="select_labels">选择标签</string>
+    <string name="select_labels">选择 Issue 标签</string>
+    <string name="select_ref">选择分支或标签</string>
     <string name="no_milestone">暂无里程碑</string>
     <string name="unassigned">无人被指派</string>
     <string name="assigned">被指派</string>
@@ -163,7 +163,7 @@
     <string name="assignee_anyone">任何人</string>
     <string name="section_issue_milestone">里程碑:</string>
     <string name="none">无</string>
-    <string name="section_issue_labels">标签:</string>
+    <string name="section_issue_labels">Issue 标签:</string>
     <string name="log_in">登录</string>
     <string name="signup_link">刚刚接触 GitHub? &lt;a href=\"https://github.com/plans\">点这里&lt;/a>注册</string>
     <string name="connection_failed">无法连接到 GitHub</string>
@@ -189,10 +189,10 @@
     <string name="confirm_bookmark_delete_title">删除书签</string>
     <string name="save">保存</string>
     <string name="apply">应用</string>
-    <string name="labels_prefix">标签:</string>
+    <string name="labels_prefix">Issue 标签:</string>
     <string name="assignee">被指派人</string>
     <string name="milestone">里程碑</string>
-    <string name="labels">标签</string>
+    <string name="labels">Issue 标签</string>
     <string name="issue_confirm_close_message">确定要关闭这个 Issue 吗?</string>
     <string name="issue_confirm_reopen_message">确定要重新开启这个 Issue 吗?</string>
     <string name="issue_confirm_close_title">关闭 Issue</string>
@@ -210,5 +210,35 @@
     <string name="opening_repository">正在打开 {0}…</string>
     <string name="commit_compare_title">提交比较</string>
     <string name="commit_prefix">提交\u0020</string>
+    <string name="parent_prefix">先导\u0020</string>
+    <string name="authored">作于</string>
+    <string name="committed">提交于</string>
+    <string name="diff_line_message">您想做什么？</string>
+    <string name="comment_on_line">评论此行</string>
+    <string name="view_entire_file">查看整个文件</string>
+    <string name="comparing_commits">比较 {0} 个提交</string>
+    <string name="enable_wrapping">启用自动折行</string>
+    <string name="disable_wrapping">禁用自动折行</string>
+    <string name="code">代码</string>
+
+    <!-- Tab titles, should be as short as possible -->
+    <string name="tab_repositories">版本库</string>
+    <string name="tab_news">新鲜事</string>
+    <string name="tab_following_self">我关注的</string>
+    <string name="tab_followers_self">关注我的</string>
+    <string name="tab_following">Ta关注的</string>
+    <string name="tab_followers">关注Ta的</string>
+    <string name="tab_members">成员</string>
+    <string name="tab_code">代码</string>
+    <string name="tab_commits">提交</string>
+    <string name="tab_issues">issues</string>
+    <string name="tab_watched">我关注的</string>
+    <string name="tab_assigned">指派给我的</string>
+    <string name="tab_created">我创建的</string>
+    <string name="tab_mentioned">提到我的</string>
+    <string name="tab_mine">我的</string>
+    <string name="tab_starred">已加星标</string>
+    <string name="tab_all">所有</string>
+    <!--  -->
 
 </resources>
